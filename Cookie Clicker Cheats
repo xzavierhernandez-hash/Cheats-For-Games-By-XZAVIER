@@ -1,0 +1,78 @@
+// === SAFE COOKIE CLICKER CHEAT KEYS ===
+// Keys:
+// Y = add sugar lumps
+// E = add cookies
+// C = set heavenly chips
+// A = unlock all achievements
+// K = spawn golden cookie
+// F = Ruin the Fun
+// G = elder wrath on
+// D = elder wrath off
+// H = help message
+
+(function() {
+    console.log("Safe Cookie Clicker Cheats Loaded.");
+
+    window.addEventListener('keydown', function(e){
+
+        // Sugar lumps
+        if (e.key === "y") {
+            let amt = prompt("How many sugar lumps?", "1");
+            if (amt) Game.gainLumps(parseInt(amt));
+        }
+
+        // Cookies
+        if (e.key === "e") {
+            let amt = prompt("How many cookies?", "1000000");
+            if (amt) Game.Earn(parseInt(amt));
+        }
+
+        // Heavenly Chips
+        if (e.key === "c") {
+            let amt = prompt("Total Heavenly Chips?", "1000000");
+            if (amt) Game.heavenlyChips = parseInt(amt);
+        }
+
+        // Golden Cookie
+        if (e.key === "k") {
+            new Game.shimmer("golden");
+        }
+
+        // Unlock all achievements
+        if (e.key === "a") {
+            Object.values(Game.AchievementsById).forEach(a => Game.Win(a.name));
+        }
+
+        // Ruin The Fun
+        if (e.key === "f") {
+            Game.RuinTheFun();
+        }
+
+        // Elder wrath on
+        if (e.key === "g") {
+            Game.elderWrath = 3;
+        }
+
+        // Elder wrath off
+        if (e.key === "d") {
+            Game.elderWrath = 0;
+        }
+
+        // Help message
+        if (e.key === "h") {
+            alert(
+`Hotkeys:
+Y = Sugar lumps
+E = Cookies
+C = Heavenly Chips
+A = All Achievements
+K = Golden Cookie
+F = Ruin the Fun
+G = Elder Wrath ON
+D = Elder Wrath OFF`
+);
+        }
+
+    });
+
+})();
