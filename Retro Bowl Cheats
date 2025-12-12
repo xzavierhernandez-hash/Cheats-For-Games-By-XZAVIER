@@ -1,0 +1,214 @@
+(function(){
+
+  if(window.novaModMenu) return alert("Nova Mod Menu already running (Press J to toggle)");
+
+  window.novaModMenu = true;
+
+
+  const d=document, sty=d.createElement("style");
+
+  sty.textContent=`
+
+    #novaMenu {
+
+      position:fixed; top:10px; left:50%; transform:translateX(-50%);
+
+      width:360px; padding:13px 9px 15px 9px; background:#101322;
+
+      border:2px solid #74f8fa; color:#fff; font-family:monospace;
+
+      z-index:99999999999; display:flex; gap:7px; flex-wrap:wrap;
+
+      justify-content:center; border-radius:10px;
+
+      box-shadow: 0 0 30px #74f8fa8a; opacity:.98; font-size:13px;
+
+    }
+
+    #novaMenu button {
+
+      background:#23263e; color:#fff; border:1px solid #74f8fa;
+
+      padding:8px 10px; border-radius:8px; cursor:pointer;
+
+      flex:1 0 45%; margin:3px 2px;
+
+    }
+
+    #novaMenu button:hover {
+
+      background:#fff; color:#222;
+
+    }
+
+    #novaMenu small {
+
+      width:100%; margin-top:6px; text-align:right; color:#74f8fa; font-size:11px;
+
+    }
+
+  `;
+
+  d.head.appendChild(sty);
+
+
+  const m=d.createElement("div");
+
+  m.id="novaMenu";
+
+  m.innerHTML=`
+
+    <button id="creditsBtn">Set Credits</button>
+
+    <button id="tokensBtn">Set Tokens</button>
+
+    <button id="draftBtn">Set Draft Picks</button>
+
+    <button id="facilityBtn">Max Facilities</button>
+
+    <button id="instantWinBtn">Instant Win (99-0)</button>
+
+    <small>Nova Retro Bowl Menu 2025 - Stable Edition</small>
+
+  `;
+
+  d.body.appendChild(m);
+
+
+  // Toggle menu with 'J' key
+
+  d.addEventListener("keydown", e=>{
+
+    if(e.key.toLowerCase()==="j") {
+
+      m.style.display = m.style.display==="none"?"flex":"none";
+
+    }
+
+  });
+
+
+  // Detect Retro Bowl save key
+
+  function detectSaveKey(){
+
+    return Object.keys(localStorage).find(k=> /save/i.test(k) && (/ini|retro|college|bowl/i).test(k));
+
+  }
+
+
+  // Update save data fields with regex replacements
+
+  function updateSaveField(regex, replacement, fieldName){
+
+    const saveKey = detectSaveKey();
+
+    if(!saveKey) return alert("Save not found! Are you in main menu?");
+
+    let saveData = localStorage.getItem(saveKey);
+
+    if(!regex.test(saveData)) return alert(`${fieldName} not found in save.`);
+
+    saveData = saveData.replace(regex, replacement);
+
+    localStorage.setItem(saveKey, saveData);
+
+    alert(`${fieldName} updated. Reload the game!`);
+
+    location.reload();
+
+  }
+
+
+  // Button handlers
+
+  m.querySelector("#creditsBtn").onclick = ()=>{
+
+    const val = prompt("Enter coach credits:");
+
+    if(val) updateSaveField(/coach_credit="\d+"/, `coach_credit="${val}"`, "Credits");
+
+  };
+
+  m.querySelector("#tokensBtn").onclick = ()=>{
+
+    const val = prompt("Enter tokens:");
+
+    if(val) updateSaveField(/tokens="\d+"/, `tokens="${val}"`, "Tokens");
+
+  };
+
+  m.querySelector("#draftBtn").onclick = ()=>{
+
+    const val = prompt("Enter draft picks:");
+
+    if(!val) return;
+
+    const key = detectSaveKey();
+
+    if(!key) return alert("Save not found.");
+
+    let data = localStorage.getItem(key);
+
+    if(!/draft_picks_\d+="\d+"/.test(data)) return alert("Draft picks not found.");
+
+    data = data.replace(/draft_picks_\d+="\d+"/g, m=>m.split("=")[0]+`="${val}"`);
+
+    localStorage.setItem(key, data);
+
+    alert("Draft picks updated. Reload!");
+
+    location.reload();
+
+  };
+
+  m.querySelector("#facilityBtn").onclick = ()=>{
+
+    const key = detectSaveKey();
+
+    if(!key) return alert("Save not found.");
+
+    let data = localStorage.getItem(key);
+
+    if(!/facility_[^=]+="\d+"/.test(data)) return alert("Facilities not found.");
+
+    data = data.replace(/facility_[^=]+="\d+"/g, m=>m.split("=")[0]+`="10"`);
+
+    localStorage.setItem(key, data);
+
+    alert("Facilities maxed! Reload game.");
+
+    location.reload();
+
+  };
+
+  m.querySelector("#instantWinBtn").onclick = ()=>{
+
+    try {
+
+      if(window._xn && window._xn._WE){
+
+        let scoreObj = window._xn._WE.find(o=>o && o.gmlteam_score);
+
+        if(scoreObj){
+
+          scoreObj.gmlteam_score[0]=99;
+
+          scoreObj.gmlteam_score[1]=0;
+
+          alert("Instant win set (99-0)!");
+
+        }else alert("No live game detected.");
+
+      }
+
+    }catch(e){alert("Failed to set win: "+e.message);}
+
+  };
+
+
+  m.style.display = "flex";
+
+  alert("Nova Retro Bowl Menu loaded! Press J to toggle.");
+
+})();
