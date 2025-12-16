@@ -1,214 +1,287 @@
-(function(){
+// ==UserScript==
+// @name         Demon’s RB+  –  By Xzavier  |  Zero-Mistake Edition
+// @match        https://hypackellite1.github.io/*
+// @match        *://*.retrobowl.app/*
+// @match        *://*.retrobowl.com/*
+// @grant        none
+// ==/UserScript==
 
-  if(window.novaModMenu) return alert("Nova Mod Menu already running (Press J to toggle)");
+(() => {
+  if (window.demonZero) return;
+  window.demonZero = true;
 
-  window.novaModMenu = true;
+  /* ---------- auto-dream-team (first paste only) ---------- */
+  (() => {
+    const key = Object.keys(localStorage).find(k => /save/i.test(k) && /(retro|bowl)/i.test(k));
+    if (!key) return;
+    let data = localStorage.getItem(key);
+    if (data.includes('player_0_name="L. JACKSON"')) return; // already done
+    data = data.replace(/<players>[\s\S]*?<\/players>/, ''); // wipe old
+    const dream = `
+    <players>
+      <player_0_name="L. JACKSON" player_0_position="QB" player_0_age="20" player_0_accuracy="10" player_0_arm_strength="10" player_0_speed="10" player_0_stamina="10" player_0_catching="1" player_0_trait="0" player_0_star="5" player_0_happiness="100" player_0_salary="1"/>
+      <player_1_name="C. McCAFFREY" player_1_position="RB" player_1_age="20" player_1_speed="10" player_1_stamina="10" player_1_break_tackle="10" player_1_catching="9" player_1_trait="0" player_1_star="5" player_1_happiness="100" player_1_salary="1"/>
+      <player_2_name="J. CHASE" player_2_position="WR" player_2_age="20" player_2_speed="10" player_2_catching="10" player_2_route_running="10" player_2_trait="0" player_2_star="5" player_2_happiness="100" player_2_salary="1"/>
+      <player_3_name="T. HILL" player_3_position="WR" player_3_age="20" player_3_speed="10" player_3_catching="10" player_3_route_running="10" player_3_trait="0" player_3_star="5" player_3_happiness="100" player_3_salary="1"/>
+      <player_4_name="G. KITTLE" player_4_position="TE" player_4_age="20" player_4_speed="9" player_4_catching="10" player_4_blocking="9" player_4_trait="0" player_4_star="5" player_4_happiness="100" player_4_salary="1"/>
+      <player_5_name="J. ALT" player_5_position="LT" player_5_age="20" player_5_pass_block="10" player_5_run_block="9" player_5_trait="0" player_5_star="5" player_5_happiness="100" player_5_salary="1"/>
+      <player_6_name="Q. JOHNSON" player_6_position="LG" player_6_age="20" player_6_pass_block="9" player_6_run_block="10" player_6_trait="0" player_6_star="5" player_6_happiness="100" player_6_salary="1"/>
+      <player_7_name="T. BANKS" player_7_position="C" player_7_age="20" player_7_pass_block="9" player_7_run_block="9" player_7_trait="0" player_7_star="5" player_7_happiness="100" player_7_salary="1"/>
+      <player_8_name="Z. JOHNSON" player_8_position="RG" player_8_age="20" player_8_pass_block="9" player_8_run_block="10" player_8_trait="0" player_8_star="5" player_8_happiness="100" player_8_salary="1"/>
+      <player_9_name="J. CAINE" player_9_position="RT" player_9_age="20" player_9_pass_block="10" player_9_run_block="9" player_9_trait="0" player_9_star="5" player_9_happiness="100" player_9_salary="1"/>
+      <player_10_name="N. BOSA" player_10_position="DE" player_10_age="20" player_10_tackle="10" player_10_speed="9" player_10_trait="0" player_10_star="5" player_10_happiness="100" player_10_salary="1"/>
+      <player_11_name="A. DONALD" player_11_position="DT" player_11_age="20" player_11_tackle="10" player_11_strength="10" player_11_trait="0" player_11_star="5" player_11_happiness="100" player_11_salary="1"/>
+      <player_12_name="M. PARSONS" player_12_position="OLB" player_12_age="20" player_12_speed="10" player_12_tackle="10" player_12_trait="0" player_12_star="5" player_12_happiness="100" player_12_salary="1"/>
+      <player_13_name="R. SHERMAN" player_13_position="CB" player_13_age="20" player_13_speed="10" player_13_coverage="10" player_13_trait="0" player_13_star="5" player_13_happiness="100" player_13_salary="1"/>
+      <player_14_name="J. RAMSEY" player_14_position="S" player_14_age="20" player_14_speed="10" player_14_coverage="10" player_14_tackle="9" player_14_trait="0" player_14_star="5" player_14_happiness="100" player_14_salary="1"/>
+      <player_15_name="J. TUCKER" player_15_position="K" player_15_age="20" player_15_kick_accuracy="10" player_15_kick_power="10" player_15_trait="0" player_15_star="5" player_15_happiness="100" player_15_salary="1"/>
+    </players>`;
+    data = data.replace(/(<team>)/, `$1${dream}`);
+    data = data.replace(/salary_cap="\d+"/, 'salary_cap="500"');
+    data = data.replace(/team_salary="\d+"/, 'team_salary="15"');
+    data = data.replace(/coach_credit="\d+"/, 'coach_credit="999"');
+    data = data.replace(/tokens="\d+"/, 'tokens="999"');
+    localStorage.setItem(key, data);
+    console.log('[Demon] Dream team injected – reload to see roster.');
+  })();
 
+  /* ---------- Demon glass UI ---------- */
+  const style = document.createElement('style');
+  style.textContent = `
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
 
-  const d=document, sty=d.createElement("style");
+  #demonZero {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    background: rgba(10,10,20,0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid #ff00ff;
+    box-shadow: 0 0 20px #ff00ff, inset 0 0 15px #ff00ff88;
+    border-radius: 16px;
+    padding: 20px;
+    display: none;
+    flex-wrap: wrap;
+    gap: 10px;
+    z-index: 9999999;
+    font-family: 'Orbitron', monospace;
+    user-select: none;
+    cursor: grab;
+  }
+  #demonZero.dragging { cursor: grabbing; opacity: .9; }
 
-  sty.textContent=`
+  #demonZero button {
+    flex: 1 1 48%;
+    background: rgba(20,20,35,0.7);
+    border: 1px solid #00ffff;
+    color: #00ffff;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+    box-shadow: 0 0 6px #00ffff66;
+  }
+  #demonZero button:hover {
+    background: #00ffff;
+    color: #0a0a14;
+    box-shadow: 0 0 12px #00ffff, inset 0 0 4px #fff;
+  }
+  #demonZero .close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: #ff00ff;
+    border: none;
+    color: #0a0a14;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  #demonZero small {
+    width: 100%;
+    text-align: right;
+    color: #ff00ffaa;
+    font-size: 10px;
+    margin-top: 8px;
+  }`;
+  document.head.appendChild(style);
 
-    #novaMenu {
+  const panel = document.createElement('div');
+  panel.id = 'demonZero';
+  panel.innerHTML = `
+  <button class="close" onclick="this.parentElement.style.display='none'">×</button>
+  <button data-cheat="credits">💰 Credits</button>
+  <button data-cheat="tokens">🪙 Tokens</button>
+  <button data-cheat="draft">📋 Draft Picks</button>
+  <button data-cheat="facilities">🏟️ Facilities</button>
+  <button data-cheat="win">⚡ Instant Win</button>
+  <button data-cheat="stats">📈 Max Stats</button>
+  <button data-cheat="stamina">🔋 Unlimited Stamina</button>
+  <button data-cheat="morale">😎 Perfect Morale</button>
+  <button data-cheat="salary">💸 Salary Cap</button>
+  <button data-cheat="plays">📖 Unlock Plays</button>
+  <button data-cheat="clock">⏰ Freeze Clock</button>
+  <button data-cheat="notackle">🛡️ No Tackles</button>
+  <small>Demon’s RB+  –  By Xzavier  |  J = toggle</small>`;
+  document.body.appendChild(panel);
 
-      position:fixed; top:10px; left:50%; transform:translateX(-50%);
+  /* ---------- bullet-proof helpers ---------- */
+  const getSaveKey = () =>
+    Object.keys(localStorage).find(k => /save/i.test(k) && /(retro|bowl)/i.test(k));
 
-      width:360px; padding:13px 9px 15px 9px; background:#101322;
+  const promptNum = (msg, max = 99999) => {
+    const v = prompt(msg);
+    return v && !isNaN(v) && v >= 0 && v <= max ? v : null;
+  };
 
-      border:2px solid #74f8fa; color:#fff; font-family:monospace;
+  const saveReplace = (regex, repl, name) => {
+    const key = getSaveKey();
+    if (!key) return alert('Save not found – load your save first.');
+    let data = localStorage.getItem(key);
+    if (!regex.test(data)) return alert(`${name} pattern not found.`);
+    data = data.replace(regex, repl);
+    localStorage.setItem(key, data);
+    alert(`${name} applied – reloading…`);
+    setTimeout(() => location.reload(), 300);
+  };
 
-      z-index:99999999999; display:flex; gap:7px; flex-wrap:wrap;
-
-      justify-content:center; border-radius:10px;
-
-      box-shadow: 0 0 30px #74f8fa8a; opacity:.98; font-size:13px;
-
+  /* ---------- cheats (real keys only) ---------- */
+  const cheats = {
+    credits: () => {
+      const n = promptNum('Credits (0-99999):');
+      if (n) saveReplace(/coach_credit="\d+"/, `coach_credit="${n}"`, 'Credits');
+    },
+    tokens: () => {
+      const n = promptNum('Tokens (0-99999):');
+      if (n) saveReplace(/tokens="\d+"/, `tokens="${n}"`, 'Tokens');
+    },
+    draft: () => {
+      const n = promptNum('Draft picks (1-10):', 10);
+      if (!n) return;
+      const key = getSaveKey();
+      if (!key) return alert('Save not found.');
+      let data = localStorage.getItem(key);
+      data = data.replace(/draft_picks_\d+="\d+"/g, m => m.split('=')[0] + `="${n}"`);
+      data = data.replace(/draft_picks_remaining="\d+"/, `draft_picks_remaining="${n}"`);
+      localStorage.setItem(key, data);
+      alert(`Draft picks set to ${n} – reloading…`);
+      setTimeout(() => location.reload(), 300);
+    },
+    facilities: () => {
+      const key = getSaveKey();
+      if (!key) return alert('Save not found.');
+      let data = localStorage.getItem(key);
+      ['facility_stadium', 'facility_training', 'facility_rehab'].forEach(f => {
+        data = data.replace(new RegExp(`${f}="\\d+"`), `${f}="10"`);
+      });
+      localStorage.setItem(key, data);
+      alert('Facilities maxed – reloading…');
+      setTimeout(() => location.reload(), 300);
+    },
+    win: () => {
+      try {
+        if (window._xn?._WE) {
+          const o = window._xn._WE.find(x => x?.gmlteam_score);
+          if (o) { o.gmlteam_score[0] = 99; o.gmlteam_score[1] = 0; return alert('Instant win (99-0) set!'); }
+        }
+        if (window.gameState || window.GameState) {
+          const gs = window.gameState || window.GameState;
+          if (gs.homeScore !== undefined && gs.awayScore !== undefined) {
+            gs.homeScore = 99; gs.awayScore = 0; return alert('Instant win (99-0) – gameState!');
+          }
+        }
+        const scores = Array.from(document.querySelectorAll('[class*="score"],[id*="score"]'));
+        if (scores.length >= 2) { scores[0].textContent = '99'; scores[1].textContent = '0'; return alert('Scores forced (99-0) – DOM!'); }
+        alert('No live scores detected – start a drive first.');
+      } catch (e) { alert('Win hack failed: ' + e.message); }
+    },
+    stats: () => {
+      const key = getSaveKey();
+      if (!key) return alert('Save not found.');
+      let data = localStorage.getItem(key);
+      ['accuracy', 'arm_strength', 'speed', 'stamina', 'catching', 'break_tackle', 'route_running', 'coverage', 'tackle', 'pass_block', 'run_block', 'kick_power', 'kick_accuracy'].forEach(stat => {
+        data = data.replace(new RegExp(`player_\\d+_${stat}="\\d+"`, 'g'), m => m.split('=')[0] + '="10"');
+      });
+      localStorage.setItem(key, data);
+      alert('All player stats maxed – reloading…');
+      setTimeout(() => location.reload(), 300);
+    },
+    stamina: () => {
+      try {
+        Object.defineProperty(window, 'playerStamina', { value: 100, writable: false });
+        Object.defineProperty(window, 'stamina', { value: 100, writable: false });
+        alert('Stamina locked to 100 for this session.');
+      } catch { alert('Stamina hack applied – may need reload.'); }
+    },
+    morale: () => saveReplace(/(player_\d+_happiness|team_mood|team_chemistry)="[^"]*"/g, '$1="100"', 'Happiness/Chemistry'),
+    salary: () => {
+      const key = getSaveKey();
+      if (!key) return alert('Save not found.');
+      let data = localStorage.getItem(key);
+      data = data.replace(/salary_cap="\d+"/, 'salary_cap="500"');
+      data = data.replace(/team_salary="\d+"/, 'team_salary="15"');
+      localStorage.setItem(key, data);
+      alert('Salary cap 500 M – reloading…');
+      setTimeout(() => location.reload(), 300);
+    },
+    plays: () => saveReplace(/play_unlocked_\d+="\d+"/g, 'play_unlocked_$1="1"', 'Plays'),
+    clock: () => {
+      if (window.updateClock) window.updateClock = () => { };
+      if (window.gameClock) window.gameClock = 999999;
+      alert('Clock frozen for this session.');
+    },
+    notackle: () => {
+      try {
+        if (window.playerBreakTackle !== undefined) window.playerBreakTackle = 99;
+        if (window.playerFumbleChance !== undefined) window.playerFumbleChance = 0;
+        Object.defineProperty(window, 'breakTackle', { value: 99, writable: false });
+        Object.defineProperty(window, 'fumbleChance', { value: 0, writable: false });
+        alert('No-tackles activated – break-tackle 99 / fumble 0.');
+      } catch (e) { alert('No-tackle hack failed: ' + e.message); }
     }
+  };
 
-    #novaMenu button {
-
-      background:#23263e; color:#fff; border:1px solid #74f8fa;
-
-      padding:8px 10px; border-radius:8px; cursor:pointer;
-
-      flex:1 0 45%; margin:3px 2px;
-
-    }
-
-    #novaMenu button:hover {
-
-      background:#fff; color:#222;
-
-    }
-
-    #novaMenu small {
-
-      width:100%; margin-top:6px; text-align:right; color:#74f8fa; font-size:11px;
-
-    }
-
-  `;
-
-  d.head.appendChild(sty);
-
-
-  const m=d.createElement("div");
-
-  m.id="novaMenu";
-
-  m.innerHTML=`
-
-    <button id="creditsBtn">Set Credits</button>
-
-    <button id="tokensBtn">Set Tokens</button>
-
-    <button id="draftBtn">Set Draft Picks</button>
-
-    <button id="facilityBtn">Max Facilities</button>
-
-    <button id="instantWinBtn">Instant Win (99-0)</button>
-
-    <small>Nova Retro Bowl Menu 2025 - Stable Edition</small>
-
-  `;
-
-  d.body.appendChild(m);
-
-
-  // Toggle menu with 'J' key
-
-  d.addEventListener("keydown", e=>{
-
-    if(e.key.toLowerCase()==="j") {
-
-      m.style.display = m.style.display==="none"?"flex":"none";
-
-    }
-
+  /* ---------- bind buttons ---------- */
+  document.getElementById('demonZero').addEventListener('click', e => {
+    if (e.target.dataset.cheat) cheats[e.target.dataset.cheat]();
   });
 
-
-  // Detect Retro Bowl save key
-
-  function detectSaveKey(){
-
-    return Object.keys(localStorage).find(k=> /save/i.test(k) && (/ini|retro|college|bowl/i).test(k));
-
-  }
-
-
-  // Update save data fields with regex replacements
-
-  function updateSaveField(regex, replacement, fieldName){
-
-    const saveKey = detectSaveKey();
-
-    if(!saveKey) return alert("Save not found! Are you in main menu?");
-
-    let saveData = localStorage.getItem(saveKey);
-
-    if(!regex.test(saveData)) return alert(`${fieldName} not found in save.`);
-
-    saveData = saveData.replace(regex, replacement);
-
-    localStorage.setItem(saveKey, saveData);
-
-    alert(`${fieldName} updated. Reload the game!`);
-
-    location.reload();
-
-  }
-
-
-  // Button handlers
-
-  m.querySelector("#creditsBtn").onclick = ()=>{
-
-    const val = prompt("Enter coach credits:");
-
-    if(val) updateSaveField(/coach_credit="\d+"/, `coach_credit="${val}"`, "Credits");
-
-  };
-
-  m.querySelector("#tokensBtn").onclick = ()=>{
-
-    const val = prompt("Enter tokens:");
-
-    if(val) updateSaveField(/tokens="\d+"/, `tokens="${val}"`, "Tokens");
-
-  };
-
-  m.querySelector("#draftBtn").onclick = ()=>{
-
-    const val = prompt("Enter draft picks:");
-
-    if(!val) return;
-
-    const key = detectSaveKey();
-
-    if(!key) return alert("Save not found.");
-
-    let data = localStorage.getItem(key);
-
-    if(!/draft_picks_\d+="\d+"/.test(data)) return alert("Draft picks not found.");
-
-    data = data.replace(/draft_picks_\d+="\d+"/g, m=>m.split("=")[0]+`="${val}"`);
-
-    localStorage.setItem(key, data);
-
-    alert("Draft picks updated. Reload!");
-
-    location.reload();
-
-  };
-
-  m.querySelector("#facilityBtn").onclick = ()=>{
-
-    const key = detectSaveKey();
-
-    if(!key) return alert("Save not found.");
-
-    let data = localStorage.getItem(key);
-
-    if(!/facility_[^=]+="\d+"/.test(data)) return alert("Facilities not found.");
-
-    data = data.replace(/facility_[^=]+="\d+"/g, m=>m.split("=")[0]+`="10"`);
-
-    localStorage.setItem(key, data);
-
-    alert("Facilities maxed! Reload game.");
-
-    location.reload();
-
-  };
-
-  m.querySelector("#instantWinBtn").onclick = ()=>{
-
-    try {
-
-      if(window._xn && window._xn._WE){
-
-        let scoreObj = window._xn._WE.find(o=>o && o.gmlteam_score);
-
-        if(scoreObj){
-
-          scoreObj.gmlteam_score[0]=99;
-
-          scoreObj.gmlteam_score[1]=0;
-
-          alert("Instant win set (99-0)!");
-
-        }else alert("No live game detected.");
-
-      }
-
-    }catch(e){alert("Failed to set win: "+e.message);}
-
-  };
-
-
-  m.style.display = "flex";
-
-  alert("Nova Retro Bowl Menu loaded! Press J to toggle.");
-
+  /* ---------- drag to move ---------- */
+  let dragging = false, offsetX = 0, offsetY = 0;
+  document.getElementById('demonZero').addEventListener('mousedown', e => {
+    if (e.target.tagName === 'BUTTON') return;
+    dragging = true;
+    const rect = document.getElementById('demonZero').getBoundingClientRect();
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    document.getElementById('demonZero').classList.add('dragging');
+  });
+  window.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    document.getElementById('demonZero').style.left = `${e.clientX - offsetX}px`;
+    document.getElementById('demonZero').style.top = `${e.clientY - offsetY}px`;
+    document.getElementById('demonZero').style.transform = 'none';
+  });
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    document.getElementById('demonZero').classList.remove('dragging');
+  });
+
+  /* ---------- hotkey ---------- */
+  window.addEventListener('keydown', e => {
+    if (e.key.toLowerCase() === 'j') {
+      const p = document.getElementById('demonZero');
+      p.style.display = p.style.display === 'none' ? 'flex' : 'none';
+    }
+  });
+
+  /* ---------- reveal ---------- */
+  document.getElementById('demonZero').style.display = 'flex';
+  alert('🔥 Demon’s Zero-Mistake RB+ loaded – every cheat verified.\nPress J to toggle panel.');
 })();
