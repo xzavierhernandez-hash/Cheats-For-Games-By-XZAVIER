@@ -1,0 +1,94 @@
+(() => {
+  const root = document.createElement("div");
+  root.style.cssText = `
+    position:fixed; inset:0;
+    background:black;
+    color:#ff1a1a;
+    font-family:Consolas,monospace;
+    z-index:999999;
+    overflow:hidden;
+  `;
+  document.body.appendChild(root);
+  document.documentElement.requestFullscreen?.();
+
+  const ctx = new (window.AudioContext||window.webkitAudioContext)();
+  const beep = () => {
+    const o=ctx.createOscillator(), g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value=900; g.gain.value=0.02;
+    o.start(); setTimeout(()=>o.stop(),70);
+  };
+
+  const spamLines = [
+    "PROCESS SPAWNED",
+    "THREAD ACTIVE",
+    "BUFFER OVERFLOW WARNING",
+    "MEMORY USAGE SPIKE",
+    "SYSTEM RESPONSE DELAY",
+    "RUNTIME LOOP DETECTED",
+    "EXECUTION STACK GROWING",
+    "MULTIPLE TASKS OPENING",
+    "RESOURCE LOCKED",
+    "BACKGROUND ACTIVITY SURGE"
+  ];
+
+  function spawnWindow(){
+    const w=document.createElement("div");
+    w.style.cssText=`
+      position:absolute;
+      top:${Math.random()*80}%;
+      left:${Math.random()*80}%;
+      width:320px;
+      height:180px;
+      border:2px solid red;
+      padding:6px;
+      font-size:12px;
+      background:black;
+    `;
+    root.appendChild(w);
+    let i=0;
+    const int=setInterval(()=>{
+      w.innerHTML+=spamLines[i++%spamLines.length]+"<br>";
+      beep();
+      if(i>40) clearInterval(int);
+    },40);
+    setTimeout(()=>w.remove(),4000);
+  }
+
+  setInterval(spawnWindow,300);
+
+  setInterval(()=>{
+    const big=document.createElement("div");
+    big.style.cssText=`
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:48px;
+      color:red;
+      animation:flash .3s infinite;
+    `;
+    big.innerText="⚠ SYSTEM ACTIVITY OVERLOAD ⚠";
+    root.appendChild(big);
+    setTimeout(()=>big.remove(),600);
+  },2000);
+
+  const style=document.createElement("style");
+  style.innerHTML=`
+    @keyframes flash{50%{opacity:0}}
+  `;
+  document.head.appendChild(style);
+
+  setInterval(()=>{
+    root.style.transform=
+      `translate(${Math.random()*10-5}px,${Math.random()*10-5}px)`;
+  },60);
+
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){
+      document.exitFullscreen?.();
+      root.remove();
+    }
+  });
+})();
