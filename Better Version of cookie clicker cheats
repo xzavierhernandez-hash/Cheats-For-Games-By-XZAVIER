@@ -1,0 +1,134 @@
+// == Cookie Clicker Cheat Panel ==
+// Made for your version 😎
+
+(() => {
+  if (window.ccCheatPanel) return;
+  window.ccCheatPanel = true;
+
+  console.log("🍪 Cookie Clicker Cheat Panel Loaded");
+
+  /* ---------- styles ---------- */
+  const style = document.createElement("style");
+  style.textContent = `
+    #ccPanel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 320px;
+      background: rgba(20,20,30,.95);
+      border: 2px solid #f5c542;
+      box-shadow: 0 0 20px #f5c542;
+      border-radius: 14px;
+      padding: 16px;
+      z-index: 999999;
+      font-family: monospace;
+      display: none;
+    }
+    #ccPanel h2 {
+      margin: 0 0 12px;
+      text-align: center;
+      color: #f5c542;
+    }
+    #ccPanel button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #f5c542;
+      color: #000;
+    }
+    #ccPanel button:hover {
+      background: #ffd966;
+    }
+    #ccPanel .close {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #f5c542;
+    }
+    #ccPanel small {
+      display: block;
+      margin-top: 8px;
+      text-align: center;
+      color: #aaa;
+      font-size: 11px;
+    }
+  `;
+  document.head.appendChild(style);
+
+  /* ---------- panel ---------- */
+  const panel = document.createElement("div");
+  panel.id = "ccPanel";
+  panel.innerHTML = `
+    <div class="close">✖</div>
+    <h2>🍪 Cheat Panel</h2>
+
+    <button id="cookies">Add Cookies</button>
+    <button id="lumps">Add Sugar Lumps</button>
+    <button id="chips">Set Heavenly Chips</button>
+    <button id="golden">Spawn Golden Cookie</button>
+    <button id="achievements">Unlock All Achievements</button>
+    <button id="ruin">Ruin The Fun</button>
+    <button id="wrathOn">Elder Wrath ON</button>
+    <button id="wrathOff">Elder Wrath OFF</button>
+
+    <small>Press H to toggle panel</small>
+  `;
+  document.body.appendChild(panel);
+
+  /* ---------- buttons ---------- */
+  panel.querySelector(".close").onclick = () => panel.style.display = "none";
+
+  document.getElementById("cookies").onclick = () => {
+    const v = prompt("How many cookies?");
+    if (v && !isNaN(v)) Game.Earn(Number(v));
+  };
+
+  document.getElementById("lumps").onclick = () => {
+    const v = prompt("How many sugar lumps?");
+    if (v && !isNaN(v)) Game.gainLumps(Number(v));
+  };
+
+  document.getElementById("chips").onclick = () => {
+    const v = prompt("Total Heavenly Chips?");
+    if (v && !isNaN(v)) Game.heavenlyChips = Number(v);
+  };
+
+  document.getElementById("golden").onclick = () => {
+    new Game.shimmer("golden");
+  };
+
+  document.getElementById("achievements").onclick = () => {
+    Object.values(Game.AchievementsById).forEach(a => Game.Win(a.name));
+    alert("All achievements unlocked!");
+  };
+
+  document.getElementById("ruin").onclick = () => {
+    Game.RuinTheFun();
+  };
+
+  document.getElementById("wrathOn").onclick = () => {
+    Game.elderWrath = 3;
+  };
+
+  document.getElementById("wrathOff").onclick = () => {
+    Game.elderWrath = 0;
+  };
+
+  /* ---------- hotkey ---------- */
+  window.addEventListener("keydown", e => {
+    if (e.key.toLowerCase() === "h") {
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+  });
+
+  /* ---------- show ---------- */
+  panel.style.display = "block";
+  alert("🍪 Cookie Clicker Cheat Panel Loaded\nPress H to toggle");
+})();
