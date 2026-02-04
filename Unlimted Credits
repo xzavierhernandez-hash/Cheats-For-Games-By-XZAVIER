@@ -1,0 +1,101 @@
+// ==UserScript==
+// @name         Demon RB Unlimited Credits (Clean Build)
+// @author       Xzavier
+// @match        https://hypackellite1.github.io/*
+// @match        *://*.retrobowl.app/*
+// @match        *://*.retrobowl.com/*
+// @grant        none
+// ==/UserScript==
+
+(() => {
+  if (window.demonUnlimited) return;
+  window.demonUnlimited = true;
+
+  /* ---------- helpers ---------- */
+  const getSaveKey = () =>
+    Object.keys(localStorage).find(k => /save/i.test(k) && /(retro|bowl)/i.test(k));
+
+  const setCredits = (amount) => {
+    const key = getSaveKey();
+    if (!key) return alert('No save found. Load your save first.');
+    let data = localStorage.getItem(key);
+    data = data.replace(/coach_credit="\d+"/, `coach_credit="${amount}"`);
+    localStorage.setItem(key, data);
+    alert(`Credits set to ${amount}\nReloading…`);
+    setTimeout(() => location.reload(), 300);
+  };
+
+  /* ---------- UI ---------- */
+  const style = document.createElement('style');
+  style.textContent = `
+    #demonUI {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(15,15,25,.9);
+      backdrop-filter: blur(12px);
+      border: 2px solid #00ffff;
+      box-shadow: 0 0 25px #00ffff;
+      border-radius: 14px;
+      padding: 18px;
+      z-index: 999999;
+      font-family: monospace;
+      display: none;
+    }
+    #demonUI h2 {
+      margin: 0 0 12px;
+      color: #00ffff;
+      text-align: center;
+    }
+    #demonUI button {
+      width: 100%;
+      padding: 10px;
+      background: #00ffff;
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    #demonUI button:hover {
+      background: #7fffff;
+    }
+    #demonUI small {
+      display: block;
+      margin-top: 10px;
+      text-align: center;
+      color: #aaa;
+      font-size: 11px;
+    }
+  `;
+  document.head.appendChild(style);
+
+  const ui = document.createElement('div');
+  ui.id = 'demonUI';
+  ui.innerHTML = `
+    <h2>💰 Unlimited Credits</h2>
+    <button id="setCredits">Set Credits</button>
+    <small>Press J to toggle</small>
+  `;
+  document.body.appendChild(ui);
+
+  /* ---------- button ---------- */
+  document.getElementById('setCredits').onclick = () => {
+    const v = prompt('Enter ANY credit amount:\n(No limit)');
+    if (!v || isNaN(v) || v < 0) return;
+    setCredits(v);
+  };
+
+  /* ---------- hotkey ---------- */
+  window.addEventListener('keydown', e => {
+    if (e.key.toLowerCase() === 'j') {
+      ui.style.display = ui.style.display === 'none' ? 'block' : 'none';
+    }
+  });
+
+  /* ---------- reveal ---------- */
+  ui.style.display = 'block';
+  alert('🔥 Demon RB Unlimited Credits loaded\nPress J to toggle');
+})();
